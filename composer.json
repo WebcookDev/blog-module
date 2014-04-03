@@ -1,14 +1,14 @@
 {
     "name": "webcms2/blog-module",
     "type": "library",
-    "description": "sanda@webcook.cz",
+    "description": "WebCMS2 blog module.",
     "keywords": ["webcms2","module"],
     "homepage": "http://www.webcook.cz/WebCMS2",
     "license": "MIT",
     "authors": [
         {
-            "name": "Jakub",
-            "email": "Sanda",
+            "name": "Jakub Šanda",
+            "email": "jakub.sanda@webcook.cz",
             "homepage": "http://www.webcook.cz",
             "role": "Developer"
         }
