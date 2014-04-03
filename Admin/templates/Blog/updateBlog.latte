@@ -4,5 +4,43 @@
 
 	<h1>{_'Blog detail'}</h1>
 	
+	{form blogForm}
+		
+		<div class="form-group">
+			{label title /}
+			{input title class => 'form-control'}
+		</div>
+		<div class="form-group">
+			{label perex /}
+			{input perex class => 'form-control editor'}
+		</div>
+		<div class="form-group">
+			{label text /}
+			{input text class => 'form-control editor'}
+		</div>
+		
+		<a n:href=":Admin:Filesystem:default dialog => true, multiple => true" data-container="#pictures" class="btn btn-primary ajax filesDialog" data-remote="false" data-target="#myModal" data-toggle="modal">{_'Load files'}</a>
+
+		<br /><br />
+		
+		<div class="well row" id="pictures">
+			{if $blogPost->getId()}
+				{foreach $blogPost->getPhotos() as $photo}
+					<div class="col-md-3 jq_fileBox">
+						<div class="img-thumbnail">
+							<img src="{$basePath}{$photo->getPath()|thumbnail:'system'}" />
+							<input type="hidden" name="files[]" value="{$photo->getPath()}" />
+							<input class="form-control" type="text" name="fileNames[]" value="{$photo->getTitle()}" />
+							<input class="form-control" type="radio" name="fileDefault[]" value="{$iterator->counter}" {if $photo->getDefault()}checked{/if} />
+							<span class="btn btn-default jq_fileDelete">&times</span>
+						</div>
+					</div>
+				{/foreach}
+			{/if}
+		</div>
+		
+		{input send class => 'btn btn-success'}
+		
+	{/form}
 			
 {/block}

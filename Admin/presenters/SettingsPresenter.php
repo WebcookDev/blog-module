@@ -29,6 +29,7 @@ class SettingsPresenter extends \AdminModule\BasePresenter {
 	public function createComponentSettingsForm(){
 		
 		$settings = array();
+		$settings[] = $this->settings->get('Show comments', 'blogModule' . $this->actualPage->getId(), 'checkbox', array());
 		
 		return $this->createSettingsForm($settings);
 	}

@@ -50,6 +50,12 @@ class BlogPost extends \WebCMS\Entity\Entity {
      * @orm\Column(length=64)
      */
 	private $slug;
+	
+	/**
+	 * @orm\OneToMany(targetEntity="Photo", mappedBy="blogPost") 
+	 * @var Array
+	 */
+	private $photos;
 
 	
 	public function getTitle() {
@@ -106,6 +112,24 @@ class BlogPost extends \WebCMS\Entity\Entity {
 
 	public function setSlug($slug) {
 		$this->slug = $slug;
+	}
+	
+	public function getPhotos() {
+		return $this->photos;
+	}
+
+	public function setPhotos(Array $photos) {
+		$this->photos = $photos;
+	}
+	
+	public function getDefaultPhoto(){
+		foreach($this->getPhotos() as $photo){
+			if($photo->getDefault()){
+				return $photo;
+			}
+		}
+		
+		return NULL;
 	}
 
 	

@@ -18,10 +18,10 @@ class Photo extends \WebCMS\Entity\Entity{
 	private $title;
 	
 	/**
-	 * @orm\ManyToOne(targetEntity="BlogPost")
+	 * @orm\ManyToOne(targetEntity="blogPost")
 	 * @orm\JoinColumn(name="blogPost_id", referencedColumnName="id", onDelete="CASCADE")
 	 */
-	private $post;
+	private $blogPost;
 
 	/**
 	 * @orm\Column(type="text")
@@ -41,12 +41,12 @@ class Photo extends \WebCMS\Entity\Entity{
 		$this->title = $title;
 	}
 
-	public function getPost() {
-		return $this->post;
+	public function getBlogPost() {
+		return $this->blogPost;
 	}
 
-	public function setPost($post) {
-		$this->post = $post;
+	public function setBlogPost($blogPost) {
+		$this->blogPost = $blogPost;
 	}
 
 	public function getPath() {

@@ -52,7 +52,7 @@ class BlogPresenter extends \AdminModule\BasePresenter {
 		if(is_numeric($id)){
 			$this->blogPost = $this->repository->find($id);
 		}else{
-			$this->blogPost = new \WebCMS\BlogModule\Doctrine\BlogPos;
+			$this->blogPost = new \WebCMS\BlogModule\Doctrine\BlogPost;
 		}
 	}
 	
@@ -92,7 +92,6 @@ class BlogPresenter extends \AdminModule\BasePresenter {
 		$this->blogPost->setTitle($values->title);
 		$this->blogPost->setPerex($values->perex);
 		$this->blogPost->setText($values->text);
-		$this->blogPost->setDate(new DateTime());
 		$this->blogPost->setPage($this->actualPage);
 		
 		if(!$this->blogPost->getId()){
@@ -124,7 +123,7 @@ class BlogPresenter extends \AdminModule\BasePresenter {
 				}
 				
 				$photo->setPath($path);
-				$photo->setActuality($this->blogPost);
+				$photo->setBlogPost($this->blogPost);
 
 				$this->em->persist($photo);
 
