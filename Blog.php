@@ -5,7 +5,7 @@ namespace WebCMS\BlogModule;
 /**
  * WebCMS2 blog module
  *
- * @author Jakub Šanda <sanda at webcook.cz>
+ * @author Jakub Šanda <jakub.sanda at webcook.cz>
  */
 class Blog extends \WebCMS\Module {
 	
