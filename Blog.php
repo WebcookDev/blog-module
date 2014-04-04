@@ -11,7 +11,7 @@ class Blog extends \WebCMS\Module {
 	
 	protected $name = 'Blog';
 	
-	protected $author = 'Jakub Šand';
+	protected $author = 'Jakub Šanda';
 	
 	protected $presenters = array(
 		array(
