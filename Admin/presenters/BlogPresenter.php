@@ -5,7 +5,7 @@ namespace AdminModule\BlogModule;
 /**
  * Description of BlogPresenter
  *
- * @author Tomáš Voslař <tomas.voslar at webcook.cz>
+ * @author Jakub Šanda <jakub.sanda at webcook.cz>
  */
 class BlogPresenter extends \AdminModule\BasePresenter {
 	
