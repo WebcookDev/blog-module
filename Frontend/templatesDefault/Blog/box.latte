@@ -1,0 +1,35 @@
+
+{if count($blogPosts) > 0}
+{foreach $blogPosts as $blogPost}
+	<div class="panel panel-default">
+		<div class="panel-body">
+		<h2><a n:href="default parameters => array($blogPost->getSlug()), abbr => $abbr, path => $actualPage->getPath()" title="{$blogPost->getTitle()}">{$blogPost->getTitle()}</a></h2>
+
+		<span class="author">
+			{$blogPost->getUser()->getName()}
+		</span>
+
+		<span class="label label-default blogPostsDate">
+			<span class="dayInDate">{$blogPost->getDate()->format('d')}</span>.
+			<span class="monthInDate">{$blogPost->getDate()->format('m')}</span>.
+			<span class="yearInDate">{$blogPost->getDate()->format('Y')}</span>
+		</span>
+		{if $blogPost->getDefaultPhoto()}
+		<a n:href="default parameters => array($blogPost->getSlug()), abbr => $abbr, path => $actualPage->getPath()" title="{$blogPost->getTitle()}">
+			<img src="{$basePath}{$blogPost->getDefaultPhoto()->getPath()|thumbnail:'system'}" class="img-thumbnail float-l" />
+		</a>
+		{/if}	
+
+		{!$blogPost->getPerex()}
+		</div><!-- / .panel-body -->
+		<div class="panel-footer">
+			<a n:href="default parameters => array($blogPost->getSlug()), abbr => $abbr, path => $actualPage->getPath()" class="btn btn-primary">{_'Číst více'}</a>
+		</div><!-- /.panel-footer -->
+	</div><!-- / .panel -->
+{/foreach}
+<div class="clearfix"></div>
+
+<a href="{$link}" title="" class="btn btn-default btn-lg">
+	{_'Více'}
+</a>
+{/if}

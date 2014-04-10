@@ -1,0 +1,39 @@
+{block content}
+	
+	<h1>{$blogPost->getTitle()}</h1>
+	
+	<span class="author">
+		{$blogPost->getUser()->getName()}
+	</span>
+	
+	<span class="label label-default newsDate">
+	    <span class="dayInDate">{$blogPost->getDate()->format('d')}</span>.
+	    <span class="monthInDate">{$blogPost->getDate()->format('m')}</span>.
+	    <span class="yearInDate">{$blogPost->getDate()->format('Y')}</span>
+	</span>
+	
+	{if $blogPost->getDefaultPhoto()}
+		<img src="{$basePath}{$blogPost->getDefaultPhoto()->getPath()|thumbnail:'system'}" class="thumbnail float-l" />
+	{/if}
+	
+	<div class="newsMainText">
+	{!$blogPost->getText()}
+	</div>
+		
+	<div class="clearfix"></div>
+		
+	{if count($blogPost->getPhotos()) > 0}
+	<h2>{_'Související fotogalerie'}</h2>
+	{/if}
+	
+	<div class="row newsRelatedImages">
+	{foreach $blogPost->getPhotos() as $photo}
+		<div class="col-sm-6 col-md-3">
+		    <a href="{$basePath}{$photo->getPath()}" data-lightbox="gallery" class="thumbnail">
+			    <img src="{$basePath}{$photo->getPath()|thumbnail:'system'}" />
+		    </a>
+		</div>
+	{/foreach}
+	</div><!-- /.row -->
+	
+{/block}

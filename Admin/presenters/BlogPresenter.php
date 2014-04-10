@@ -89,14 +89,21 @@ class BlogPresenter extends \AdminModule\BasePresenter {
 	public function blogFormSubmitted($form){
 		$values = $form->getValues();
 		
+		
+		
 		$this->blogPost->setTitle($values->title);
 		$this->blogPost->setPerex($values->perex);
 		$this->blogPost->setText($values->text);
 		$this->blogPost->setPage($this->actualPage);
 		
+		
 		if(!$this->blogPost->getId()){
 			$this->em->persist($this->blogPost);
+			
+			$author = $this->em->find('WebCMS\Entity\User', $this->getUser()->getId());
+			$this->blogPost->setUser($author);
 		}else{
+
 			// delete old photos and save new ones
 			$qb = $this->em->createQueryBuilder();
 			$qb->delete('WebCMS\BlogModule\Doctrine\Photo', 'l')
