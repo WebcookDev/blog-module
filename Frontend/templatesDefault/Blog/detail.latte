@@ -1,6 +1,6 @@
 {block content}
 	
-	<h1>{$blogPost->getTitle()}</h1>
+	<h1 class="postTitle" data-idpost="{$blogPost->getId()}">{$blogPost->getTitle()}</h1>
 	
 	<span class="author">
 		{$blogPost->getUser()->getName()}
@@ -35,5 +35,86 @@
 		</div>
 	{/foreach}
 	</div><!-- /.row -->
+	
+	<!-- social sites implementation -->
+		<!-- TODO - presunout povoleni sdileni jednotlivych soc.s. do nastaveni blog modulu -->
+
+		<!-- Facebook -->
+		<div class="smedia facebook">
+			
+			<div class="fb-share-button" data-href="" data-type="box_count"></div>
+			<!-- /.Facebook -->
+
+			<script type="text/javascript">
+				var url = $(location).attr('href');
+
+				$( ".fb-share-button" ).attr( "data-href" , url );
+			</script>
+		
+		</div>
+
+		<!-- Google+ -->
+		
+		<div class="smedia googleplus">
+			<div class="g-plus" data-action="share" data-annotation="vertical-bubble" data-height="60"></div>
+
+			<script type="text/javascript">
+				window.___gcfg = { lang: 'cs' };
+
+				(function() {
+				  var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+				  po.src = "https://apis.google.com/js/platform.js";
+				  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+				})();
+			</script>
+		
+		</div>
+		<!-- /.Google+ -->
+
+		<!-- Twitter -->
+		
+		<div class="smedia twitter">
+
+			<a href="https://twitter.com/share" class="twitter-share-button" data-lang="cs" data-count="vertical">Tweet</a>
+			<script>!function(d,s,id){ var js,fjs=d.getElementsByTagName(s)[0];
+				if(!d.getElementById(id)){ js=d.createElement(s);
+					js.id=id;
+					js.src="https://platform.twitter.com/widgets.js";
+					fjs.parentNode.insertBefore(js,fjs);
+			}}(document,"script","twitter-wjs");</script>
+		
+		</div>
+		
+		<!-- /.Twitter -->
+	
+	<!-- /.social sites implementation -->
+
+	<!-- disqus implementation -->
+	
+		<div class="comments">
+			<div id="disqus_thread"></div>
+			<script type="text/javascript">
+				/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+
+				// TODO - presunout do nastaveni blog modulu
+				var disqus_shortname = 'webcooktest'; // required: replace example with your forum shortname
+
+				var disqus_identifier = $('.postTitle').data('idpost');
+				var disqus_title = $('.postTitle').text();
+				var disqus_url = $(location).attr('href');
+
+				/* * * DON'T EDIT BELOW THIS LINE * * */
+				(function() {
+					var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+					dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+					(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+				})();
+			</script>
+			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+		</div>
+	
+	<!-- /.disqus implementation -->
+    
 	
 {/block}
