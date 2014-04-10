@@ -18,6 +18,11 @@
 				    <span class="monthInDate">{$blogPost->getDate()->format('m')}</span>.
 				    <span class="yearInDate">{$blogPost->getDate()->format('Y')}</span>
 				</span>
+				
+				<span class="comments-count">
+					<a n:href="default parameters => array($blogPost->getSlug(), '#disqus_thread'), abbr => $abbr, path => $actualPage->getPath()" data-disqus-identifier="{$blogPost->getId()}"></a>
+				</span>
+				
 				{if $blogPost->getDefaultPhoto()}
 				<a n:href="default parameters => array($blogPost->getSlug()), abbr => $abbr, path => $actualPage->getPath()" title="{$blogPost->getTitle()}">
 					<img src="{$basePath}{$blogPost->getDefaultPhoto()->getPath()|thumbnail:'system'}" class="img-thumbnail float-l" />
@@ -32,10 +37,28 @@
 			</div><!-- / .panel -->
 		{/foreach}
 		<div class="clearfix"></div>
+		
+		<script type="text/javascript">
+		/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+			
+		// TODO - presunout do nastaveni blog modulu
+		var disqus_shortname = 'webcooktest'; // required: replace example with your forum shortname
+
+		/* * * DON'T EDIT BELOW THIS LINE * * */
+		(function () {
+		var s = document.createElement('script'); s.async = true;
+		s.type = 'text/javascript';
+		s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+		(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+		}());
+		</script>
+		
 	{else}
 		
 		{include detail.latte}
 		
 	{/if}
+	
+	
 	
 {/block}
