@@ -11,7 +11,7 @@ use Gedmo\Mapping\Annotation as gedmo;
  * @orm\Table(name="Blog")
  * @author Jakub Šanda <jakub.sanda at webcook.cz>
  */
-class BlogPost extends \WebCMS\Entity\Entity {
+class BlogPost extends \WebCMS\Entity\Seo {
 	/**
 	 * @orm\Column
 	 */
@@ -31,8 +31,13 @@ class BlogPost extends \WebCMS\Entity\Entity {
 	 * @gedmo\Timestampable(on="create")
 	 * @orm\Column(type="datetime")
 	 */
-	private $date;
+	private $created;
 	
+	/**
+	 * @orm\Column(type="datetime")
+	 */
+	private $published;
+
 	/**
 	 * @orm\ManyToOne(targetEntity="WebCMS\Entity\Page")
 	 * @orm\JoinColumn(name="page_id", referencedColumnName="id", onDelete="CASCADE")
@@ -57,6 +62,10 @@ class BlogPost extends \WebCMS\Entity\Entity {
 	 */
 	private $photos;
 
+	/**
+     * @orm\Column(type="boolean", nullable=true)
+     */
+	private $hide;
 	
 	public function getTitle() {
 		return $this->title;
@@ -98,12 +107,12 @@ class BlogPost extends \WebCMS\Entity\Entity {
 		$this->user = $user;
 	}
 	
-	public function getDate() {
-		return $this->date;
+	public function getCreated() {
+		return $this->created;
 	}
 
-	public function setDate($date) {
-		$this->date = $date;
+	public function setCreated($created) {
+		$this->created = $created;
 	}
 	
 	public function getSlug() {
@@ -132,5 +141,21 @@ class BlogPost extends \WebCMS\Entity\Entity {
 		return NULL;
 	}
 
-	
+	public function getPublished() {
+		return $this->published;
+	}
+
+	public function setPublished($published) {
+		$this->published = $published;
+	}
+
+	public function getHide()
+	{
+		return $this->hide;
+	}
+
+	public function setHide($hide)
+	{
+		$this->hide = $hide;
+	}
 }

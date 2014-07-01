@@ -24,36 +24,65 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 
     public function actionDefault($id) {
 
-	$this->blogPosts = $this->repository->findBy(array(
-	    'page' => $this->actualPage
-	    ), array('date' => 'DESC'));
+    $authorUsername = $this->getParameter('a');
+    if (!empty($authorUsername)) {
+    	$user = $this->em->getRepository('WebCMS\Entity\User')->findOneByUsername($authorUsername);
+
+    	if (empty($user)) {
+    		
+    		$this->redirect('default', array(
+			    'path' => $this->actualPage->getPath(),
+			    'abbr' => $this->abbr
+			));
+    	}
+
+    	$this->blogPosts = $this->repository->findBy(array(
+		    'page' => $this->actualPage,
+		    'hide' => 0,
+		    'user' => $user->getId()
+		    ), array('published' => 'DESC')
+	    );
+    } else {
+    	$this->blogPosts = $this->repository->findBy(array(
+		    'page' => $this->actualPage,
+		    'hide' => 0
+		    ), array('published' => 'DESC')
+	    );	
+    }
+
+	
     }
 
     public function renderDefault($id) {
 
 	$detail = $this->getParameter('parameters');
+	$author = $this->getParameter('a');
 	$blogPost = NULL;
 
 	if (count($detail) > 0) {
 	    $blogPost = $this->repository->findOneBySlug($detail[0]);
 
 	    if (!is_object($blogPost)) {
-		$this->redirect('default', array(
-		    'path' => $this->actualPage->getPath(),
-		    'abbr' => $this->abbr
-		));
+			$this->redirect('default', array(
+			    'path' => $this->actualPage->getPath(),
+			    'abbr' => $this->abbr
+			));
 	    }
 
 	    if ($this->isAjax()) {
-		$this->payload->title = $this->template->seoTitle;
-		$this->payload->url = $this->link('default', array(
-		    'path' => $this->actualPage->getPath(),
-		    'abbr' => $this->abbr,
-		    'parameters' => array(\Nette\Utils\Strings::webalize($blogPost->getTitle()))
-			));
-		$this->payload->nameSeo = \Nette\Utils\Strings::webalize($blogPost->getTitle());
-		$this->payload->name = $blogPost->getTitle();
+			$this->payload->title = $this->template->seoTitle;
+			$this->payload->url = $this->link('default', array(
+			    'path' => $this->actualPage->getPath(),
+			    'abbr' => $this->abbr,
+			    'parameters' => array(\Nette\Utils\Strings::webalize($blogPost->getTitle()))
+				));
+			$this->payload->nameSeo = \Nette\Utils\Strings::webalize($blogPost->getTitle());
+			$this->payload->name = $blogPost->getTitle();
 	    }
+	    
+	    $this->template->seoTitle = $blogPost->getMetaTitle();
+	    $this->template->seoDescription = $blogPost->getMetaDescription();
+	    $this->template->seoKeywords = $blogPost->getMetaKeywords();
 	    
 	    $this->addToBreadcrumbs($this->actualPage->getId(), 'Blog', 'Blog', $blogPost->getTitle(), $this->actualPage->getPath() . '/' . $blogPost->getSlug()
 	    );

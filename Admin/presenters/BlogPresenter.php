@@ -29,10 +29,14 @@ class BlogPresenter extends \AdminModule\BasePresenter {
 	
 	protected function createComponentBlogGrid($name){
 		
-		$grid = $this->createGrid($this, $name, 'WebCMS\BlogModule\Doctrine\BlogPost', array(array('by' => 'date', 'dir' => 'DESC')), array('page =' . $this->actualPage->getId()));
+		$grid = $this->createGrid($this, $name, 'WebCMS\BlogModule\Doctrine\BlogPost', array(array('by' => 'published', 'dir' => 'DESC')), array('page =' . $this->actualPage->getId()));
 		
 		$grid->addColumnText('title', 'Name')->setSortable()->setFilterText();
-		$grid->addColumnDate('date', 'Date')->setSortable();
+		$grid->addColumnDate('published', 'Date')->setSortable();
+		$grid->addColumnText('hide', 'Hide')->setSortable();
+		$grid->addColumnText('user', 'Author')->setSortable()->setCustomRender(function ($item) {
+            return $item->getUser() ? $item->getUser()->getName() : '';
+        });
 		
 		$grid->addActionHref("updateBlog", 'Edit', 'updateBlog', array('idPage' => $this->actualPage->getId()))->getElementPrototype()->addAttributes(array('class' => array('btn' , 'btn-primary', 'ajax')));
 		$grid->addActionHref("deleteBlog", 'Delete', 'deleteBlog', array('idPage' => $this->actualPage->getId()))->getElementPrototype()->addAttributes(array('class' => array('btn', 'btn-danger'), 'data-confirm' => 'Are you sure you want to delete this item?'));
@@ -75,9 +79,24 @@ class BlogPresenter extends \AdminModule\BasePresenter {
 		$form = $this->createForm();
 		
 		$form->addText('title', 'Title')->setRequired('Fill in title.');
+		$form->addText('published', 'Date')->setRequired('Fill in date.');
+		$form->addCheckbox('hide', 'Hide');
+		$form->addText('metaTitle', 'SEO title');
+		$form->addText('slug', 'SEO url');
+		$form->addText('metaDescription', 'SEO description');
+		$form->addText('metaKeywords', 'SEO keywords');
 		$form->addTextArea('perex', 'Perex')->setAttribute('class', array('editor'));
 		$form->addTextArea('text', 'Text')->setAttribute('class', array('editor'));
 		
+		$users = $this->em->getRepository('WebCMS\Entity\User')->findAll();
+
+		$usersSelect = array();
+		foreach ($users as $user) {
+			$usersSelect[$user->getId()] = $user->getName();
+		}
+
+		$form->addSelect('user', 'Author', $usersSelect);
+
 		$form->addSubmit('send', 'Save')->setAttribute('class', array('btn btn-success'));
 		$form->onSuccess[] = callback($this, 'blogFormSubmitted');
 
@@ -89,19 +108,25 @@ class BlogPresenter extends \AdminModule\BasePresenter {
 	public function blogFormSubmitted($form){
 		$values = $form->getValues();
 		
-		
-		
 		$this->blogPost->setTitle($values->title);
 		$this->blogPost->setPerex($values->perex);
 		$this->blogPost->setText($values->text);
+		$this->blogPost->setPublished(new \Nette\DateTime($values->published));
 		$this->blogPost->setPage($this->actualPage);
+		$this->blogPost->setMetaTitle($values->metaTitle);
+		$this->blogPost->setMetaDescription($values->metaDescription);
+		$this->blogPost->setMetaKeywords($values->metaKeywords);
+		$this->blogPost->setHide($values->hide);
+
+		if (!empty($values->slug)) {
+			$this->blogPost->setSlug($values->slug);	
+		}
 		
-		
+		$author = $this->em->find('WebCMS\Entity\User', $values->user);
+		$this->blogPost->setUser($author);
+
 		if(!$this->blogPost->getId()){
 			$this->em->persist($this->blogPost);
-			
-			$author = $this->em->find('WebCMS\Entity\User', $this->getUser()->getId());
-			$this->blogPost->setUser($author);
 		}else{
 
 			// delete old photos and save new ones
