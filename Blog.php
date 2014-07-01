@@ -35,6 +35,7 @@ class Blog extends \WebCMS\Module {
 	
 	public function __construct(){
 		$this->addBox('Blog box', 'Blog', 'blogBox');
+		$this->addBox('Blog header', 'Blog', 'blogBoxHeader');
 	}
 	
 }
