@@ -1,4 +1,4 @@
 blog-module
 ===========
 
-WebCMS2 blog module
+Basic blog module with WebCMS2 users.
