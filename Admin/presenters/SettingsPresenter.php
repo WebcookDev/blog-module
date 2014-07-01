@@ -4,7 +4,6 @@ namespace AdminModule\BlogModule;
 
 /**
  * Description of SettingsPresenter
-
  * @author Jakub Šanda <jakub.sanda at webcook.cz>
  */
 class SettingsPresenter extends \AdminModule\BasePresenter {
@@ -30,6 +29,7 @@ class SettingsPresenter extends \AdminModule\BasePresenter {
 		
 		$settings = array();
 		$settings[] = $this->settings->get('Show comments', 'blogModule' . $this->actualPage->getId(), 'checkbox', array());
+		$settings[] = $this->settings->get('Box posts count', 'blogModule' . $this->actualPage->getId(), 'text', array());
 		
 		return $this->createSettingsForm($settings);
 	}

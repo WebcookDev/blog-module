@@ -24,10 +24,10 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 
     public function actionDefault($id) {
 
-    $authorUsername = $this->getParameter('a');
-    if (!empty($authorUsername)) {
-    	$user = $this->em->getRepository('WebCMS\Entity\User')->findOneByUsername($authorUsername);
-
+    $parameters = $this->getParameter('parameters');
+    //$user = $this->em->getRepository('WebCMS\Entity\User')->findOneByUsername($parameters[0]);
+    if (!empty($user)) {
+    	
     	if (empty($user)) {
     		
     		$this->redirect('default', array(
@@ -56,10 +56,9 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
     public function renderDefault($id) {
 
 	$detail = $this->getParameter('parameters');
-	$author = $this->getParameter('a');
 	$blogPost = NULL;
 
-	if (count($detail) > 0) {
+	if (count($detail) === 1) {
 	    $blogPost = $this->repository->findOneBySlug($detail[0]);
 
 	    if (!is_object($blogPost)) {
@@ -83,7 +82,7 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 	    $this->template->seoTitle = $blogPost->getMetaTitle();
 	    $this->template->seoDescription = $blogPost->getMetaDescription();
 	    $this->template->seoKeywords = $blogPost->getMetaKeywords();
-	    
+
 	    $this->addToBreadcrumbs($this->actualPage->getId(), 'Blog', 'Blog', $blogPost->getTitle(), $this->actualPage->getPath() . '/' . $blogPost->getSlug()
 	    );
 	}
@@ -95,25 +94,25 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 	$this->template->id = $id;
     }
 
-
-    public function blogBox($context, $fromPage) {
-
+    public function blogBox($context, $fromPage) 
+    {	
+		$repository = $context->em->getRepository('WebCMS\BlogModule\Doctrine\BlogPost');
 		
-	$repository = $context->em->getRepository('WebCMS\BlogModule\Doctrine\BlogPost');
-	
-	//TODO - limit presunout do nastaveni Blogu
-	$limit = 3;
-	$blogPosts = $repository->findBy(array(), array('date' => 'DESC'), $limit);
+		$limit = $context->settings->get('Box posts count', 'blogModule' . $fromPage->getId(), 'text', array())->getValue();
+		$blogPosts = $repository->findBy(array(), array('published' => 'DESC'), $limit);
 
-	$template = $context->createTemplate();
-	$template->setFile('../app/templates/blog-module/Blog/box.latte');
-	$template->blogPosts = $blogPosts;
-	$template->link = $context->link(':Frontend:Blog:Blog:default', array(
-	    'id' => $fromPage->getId(),
-	    'path' => $fromPage->getPath(),
-	    'abbr' => $context->abbr
-	));
+		$template = $context->createTemplate();
+		$template->setFile('../app/templates/blog-module/Blog/box.latte');
+		$template->blogPosts = $blogPosts;
+		$template->abbr = $context->abbr;
+		$template->actualPage = $context->actualPage;
+		$template->fromPage = $fromPage;
+		$template->link = $context->link(':Frontend:Blog:Blog:default', array(
+		    'id' => $fromPage->getId(),
+		    'path' => $fromPage->getPath(),
+		    'abbr' => $context->abbr
+		));
 
-	return $template;
+		return $template;
     }
 }
