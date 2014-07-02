@@ -26,24 +26,17 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
     public function actionDefault($id) 
     {
 	    $parameters = $this->getParameter('parameters');
-	    //$user = $this->em->getRepository('WebCMS\Entity\User')->findOneByUsername($parameters[0]);
+	    $user = $this->em->getRepository('WebCMS\Entity\User')->findOneByUsername($parameters[0]);
+
 	    if (!empty($user)) {
 	    	
-	    	if (empty($user)) {
-	    		
-	    		$this->redirect('default', array(
-				    'path' => $this->actualPage->getPath(),
-				    'abbr' => $this->abbr
-				));
-	    	}
-
 	    	$this->blogPosts = $this->repository->findBy(array(
 			    'page' => $this->actualPage,
 			    'hide' => 0,
 			    'user' => $user->getId()
 			    ), array('published' => 'DESC')
 		    );
-	    } else {
+	    } else if (count($parameters) === 0) {
 	    	$this->blogPosts = $this->repository->findBy(array(
 			    'page' => $this->actualPage,
 			    'hide' => 0
@@ -59,7 +52,7 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 	$detail = $this->getParameter('parameters');
 	$blogPost = NULL;
 
-	if (count($detail) === 1) {
+	if (count($detail) === 1 && empty($this->blogPosts)) {
 	    $blogPost = $this->repository->findOneBySlug($detail[0]);
 
 	    if (!is_object($blogPost)) {
@@ -79,7 +72,7 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 			$this->payload->nameSeo = \Nette\Utils\Strings::webalize($blogPost->getTitle());
 			$this->payload->name = $blogPost->getTitle();
 	    }
-	    
+
 	    $this->actualPage->setClass($this->settings->get('Detail body class', 'blogModule' . $this->actualPage->getId(), 'text', array())->getValue());
 	    $this->template->seoTitle = $blogPost->getMetaTitle();
 	    $this->template->seoDescription = $blogPost->getMetaDescription();
@@ -143,6 +136,8 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 		if (count($parameters) > 0) {
 			$blogPost = $repository->findOneBySlug($parameters[0]);
 
+			if (is_object($blogPost)) {
+
 			$template = $context->createTemplate();
 			$template->setFile('../app/templates/blog-module/Blog/box2.latte');
 			$template->blogPost = $blogPost;
@@ -156,6 +151,9 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 			));
 
 			return $template;
+			} else {
+			   return false;
+			}
 		} else {
 			return false;
 		}
