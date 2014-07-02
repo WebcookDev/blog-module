@@ -72,7 +72,8 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 			$this->payload->nameSeo = \Nette\Utils\Strings::webalize($blogPost->getTitle());
 			$this->payload->name = $blogPost->getTitle();
 	    }
-
+	    
+            $this->em->detach($this->actualPage);
 	    $this->actualPage->setClass($this->settings->get('Detail body class', 'blogModule' . $this->actualPage->getId(), 'text', array())->getValue());
 	    $this->template->seoTitle = $blogPost->getMetaTitle();
 	    $this->template->seoDescription = $blogPost->getMetaDescription();
