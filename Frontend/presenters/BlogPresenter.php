@@ -26,7 +26,10 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
     public function actionDefault($id) 
     {
 	    $parameters = $this->getParameter('parameters');
-	    $user = $this->em->getRepository('WebCMS\Entity\User')->findOneByUsername($parameters[0]);
+
+	    if (count($parameters) > 0) {
+	    	$user = $this->em->getRepository('WebCMS\Entity\User')->findOneByUsername($parameters[0]);
+		}
 
 	    if (!empty($user)) {
 	    	
@@ -43,53 +46,89 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 			    ), array('published' => 'DESC')
 		    );	
 	    }
-
-	
     }
 
-    public function renderDefault($id) {
+    /**
+     * Renders RSS with blog posts.
+     * @return void
+     */
+    private function renderRss()
+    {
+    	$rssItems = array();
 
-	$detail = $this->getParameter('parameters');
-	$blogPost = NULL;
+    	foreach ($this->blogPosts as $blogPost) {
+    		$rssItem = new \WebCMS\Helpers\RssItem;
+    		$rssItem->setTitle($blogPost->getTitle());
+    		$rssItem->setDescription($blogPost->getPerex());
+    		$rssItem->setLink($this->link('//this', array(
+    				'id' => $this->actualPage->getId(),
+				    'path' => $this->actualPage->getPath(),
+				    'abbr' => $this->abbr,
+    				'parameters' => array($blogPost->getSlug())
+    			)));
+    		$rssItem->setPublishDate($blogPost->getPublished());
 
-	if (count($detail) === 1 && empty($this->blogPosts)) {
-	    $blogPost = $this->repository->findOneBySlug($detail[0]);
+    		$rssItems[] = $rssItem;
+    	}
 
-	    if (!is_object($blogPost)) {
-			$this->redirect('default', array(
-			    'path' => $this->actualPage->getPath(),
-			    'abbr' => $this->abbr
-			));
-	    }
+    	$rssRenderer = new \WebCMS\Helpers\RssRenderer($rssItems);
+    	$rssRenderer->render();
+    }
 
-	    if ($this->isAjax()) {
-			$this->payload->title = $this->template->seoTitle;
-			$this->payload->url = $this->link('default', array(
-			    'path' => $this->actualPage->getPath(),
-			    'abbr' => $this->abbr,
-			    'parameters' => array(\Nette\Utils\Strings::webalize($blogPost->getTitle()))
+    public function renderDefault($id) 
+    {
+		$detail = $this->getParameter('parameters');
+		$rss = $this->getParameter('rss');
+		$blogPost = NULL;
+
+		if (!empty($rss)) {
+			$this->renderRss();
+		}
+
+		if (count($detail) === 1 && empty($this->blogPosts)) {
+		    $blogPost = $this->repository->findOneBySlug($detail[0]);
+
+		    if (!is_object($blogPost)) {
+				$this->redirect('default', array(
+				    'path' => $this->actualPage->getPath(),
+				    'abbr' => $this->abbr
 				));
-			$this->payload->nameSeo = \Nette\Utils\Strings::webalize($blogPost->getTitle());
-			$this->payload->name = $blogPost->getTitle();
-	    }
-	    
-            $this->em->detach($this->actualPage);
-	    $this->actualPage->setClass($this->settings->get('Detail body class', 'blogModule' . $this->actualPage->getId(), 'text', array())->getValue());
-	    $this->template->seoTitle = $blogPost->getMetaTitle();
-	    $this->template->seoDescription = $blogPost->getMetaDescription();
-	    $this->template->seoKeywords = $blogPost->getMetaKeywords();
+		    }
 
-	    $this->addToBreadcrumbs($this->actualPage->getId(), 'Blog', 'Blog', $blogPost->getTitle(), $this->actualPage->getPath() . '/' . $blogPost->getSlug()
-	    );
-	}
+		    if ($this->isAjax()) {
+				$this->payload->title = $this->template->seoTitle;
+				$this->payload->url = $this->link('default', array(
+				    'path' => $this->actualPage->getPath(),
+				    'abbr' => $this->abbr,
+				    'parameters' => array(\Nette\Utils\Strings::webalize($blogPost->getTitle()))
+					));
+				$this->payload->nameSeo = \Nette\Utils\Strings::webalize($blogPost->getTitle());
+				$this->payload->name = $blogPost->getTitle();
+		    }
+		    
+	        $this->em->detach($this->actualPage);
+		    $this->actualPage->setClass($this->settings->get('Detail body class', 'blogModule' . $this->actualPage->getId(), 'text', array())->getValue());
+		    $this->template->seoTitle = $blogPost->getMetaTitle();
+		    $this->template->seoDescription = $blogPost->getMetaDescription();
+		    $this->template->seoKeywords = $blogPost->getMetaKeywords();
 
-	parent::beforeRender();
+		    $this->addToBreadcrumbs($this->actualPage->getId(), 'Blog', 'Blog', $blogPost->getTitle(), $this->actualPage->getPath() . '/' . $blogPost->getSlug()
+		    );
+		}
 
-	$this->template->blogPost = $blogPost;
-	$this->template->blogPosts = $this->blogPosts;
-	$this->template->id = $id;
+		parent::beforeRender();
+
+		$this->template->blogPost = $blogPost;
+		$this->template->blogPosts = $this->blogPosts;
+		$this->template->id = $id;
     }
 
+    /**
+     * [blogBox description]
+     * @param  [type] $context  [description]
+     * @param  [type] $fromPage [description]
+     * @return [type]           [description]
+     */
     public function blogBox($context, $fromPage) 
     {	
 		$repository = $context->em->getRepository('WebCMS\BlogModule\Doctrine\BlogPost');
@@ -112,6 +151,12 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 		return $template;
     }
 
+    /**
+     * [blogBoxHeader description]
+     * @param  [type] $context  [description]
+     * @param  [type] $fromPage [description]
+     * @return [type]           [description]
+     */
     public function blogBoxHeader($context, $fromPage) 
     {	
 		$repository = $context->em->getRepository('WebCMS\BlogModule\Doctrine\BlogPost');
@@ -144,6 +189,12 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 		}
     }
 
+    /**
+     * [blogBoxPrevious description]
+     * @param  [type] $context  [description]
+     * @param  [type] $fromPage [description]
+     * @return [type]           [description]
+     */
     public function blogBoxPrevious($context, $fromPage) 
     {	
 		$repository = $context->em->getRepository('WebCMS\BlogModule\Doctrine\BlogPost');
@@ -192,12 +243,17 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 		}
     }
 
+    /**
+     * [blogBoxComments description]
+     * @param  [type] $context  [description]
+     * @param  [type] $fromPage [description]
+     * @return [type]           [description]
+     */
     public function blogBoxComments($context, $fromPage) 
     {	
-	$template = $context->createTemplate();
-	$template->setFile('../app/templates/blog-module/Blog/boxComments.latte');
-	return $template;
+		$template = $context->createTemplate();
+		$template->setFile('../app/templates/blog-module/Blog/boxComments.latte');
+
+		return $template;
     }
-
-
 }
