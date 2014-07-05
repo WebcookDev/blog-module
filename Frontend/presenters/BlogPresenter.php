@@ -111,6 +111,7 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 		    $this->template->seoTitle = $blogPost->getMetaTitle();
 		    $this->template->seoDescription = $blogPost->getMetaDescription();
 		    $this->template->seoKeywords = $blogPost->getMetaKeywords();
+		    $this->template->previous = $this->getPrevious($blogPost);
 
 		    $this->addToBreadcrumbs($this->actualPage->getId(), 'Blog', 'Blog', $blogPost->getTitle(), $this->actualPage->getPath() . '/' . $blogPost->getSlug()
 		    );
@@ -152,108 +153,26 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
     }
 
     /**
-     * [blogBoxHeader description]
-     * @param  [type] $context  [description]
-     * @param  [type] $fromPage [description]
+     * [getPrevious description]
+     * @param  [type] $blogPost [description]
      * @return [type]           [description]
      */
-    public function blogBoxHeader($context, $fromPage) 
+    public function getPrevious($blogPost) 
     {	
-		$repository = $context->em->getRepository('WebCMS\BlogModule\Doctrine\BlogPost');
-		
-		$parameters = $context->getParameter('parameters');
+		$qb = $this->em->createQueryBuilder();
+		$qb->select('b')
+		    ->from('WebCMS\BlogModule\Doctrine\BlogPost', 'b')
+		    ->where('b.published < :actualDate')
+		    ->andWhere('b.hide = 0')
+		    ->orderBy('b.published', 'DESC')
+		    ->setMaxResults(1)
+		    ->setParameters(array('actualDate' => $blogPost->getPublished()));
+        $prev = $qb->getQuery()->getResult();
 
-		if (count($parameters) > 0) {
-			$blogPost = $repository->findOneBySlug($parameters[0]);
+        if (count($prev) > 0) {
+			return $prev[0];
+        }
 
-			if (is_object($blogPost)) {
-
-			$template = $context->createTemplate();
-			$template->setFile('../app/templates/blog-module/Blog/box2.latte');
-			$template->blogPost = $blogPost;
-			$template->abbr = $context->abbr;
-			$template->actualPage = $context->actualPage;
-			$template->fromPage = $fromPage;
-			$template->link = $context->link(':Frontend:Blog:Blog:default', array(
-			    'id' => $fromPage->getId(),
-			    'path' => $fromPage->getPath(),
-			    'abbr' => $context->abbr
-			));
-
-			return $template;
-			} else {
-			   return false;
-			}
-		} else {
-			return false;
-		}
-    }
-
-    /**
-     * [blogBoxPrevious description]
-     * @param  [type] $context  [description]
-     * @param  [type] $fromPage [description]
-     * @return [type]           [description]
-     */
-    public function blogBoxPrevious($context, $fromPage) 
-    {	
-		$repository = $context->em->getRepository('WebCMS\BlogModule\Doctrine\BlogPost');
-		
-		$parameters = $context->getParameter('parameters');
-
-		if (count($parameters) > 0) {
-			$blogPost = $repository->findOneBySlug($parameters[0]);
-
-			if (is_object($blogPost)) {
-			
-				$qb = $context->em->createQueryBuilder();
-				$qb->select('b')
-				    ->from('WebCMS\BlogModule\Doctrine\BlogPost', 'b')
-				    ->where('b.published < :actualDate')
-				    ->andWhere('b.hide = 0')
-				    ->orderBy('b.published', 'DESC')
-				    ->setMaxResults(1)
-				    ->setParameters(array('actualDate' => $blogPost->getPublished()));
-		        $prev = $qb->getQuery()->getResult();
-
-			$template = $context->createTemplate();
-
-
-		        if (count($prev) > 0) {
-	       			$template->blogPost = $prev[0];
-				$template->link = $context->link(':Frontend:Blog:Blog:default', array(
-			          'id' => $fromPage->getId(),
-			          'path' => $fromPage->getPath(),
-			          'abbr' => $context->abbr,
-			          'parameters' => array($prev[0]->getSlug())
-	      		        ));
-		        } else {
- 			       	$template->blogPost = false;
-				return false;
-		        }
-
-			$template->setFile('../app/templates/blog-module/Blog/boxPrevious.latte');
-
-			return $template;
-			} else {
-			   return false;
-			}
-		} else {
-			return false;
-		}
-    }
-
-    /**
-     * [blogBoxComments description]
-     * @param  [type] $context  [description]
-     * @param  [type] $fromPage [description]
-     * @return [type]           [description]
-     */
-    public function blogBoxComments($context, $fromPage) 
-    {	
-		$template = $context->createTemplate();
-		$template->setFile('../app/templates/blog-module/Blog/boxComments.latte');
-
-		return $template;
-    }
+		return false;
+	}
 }

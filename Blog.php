@@ -7,7 +7,8 @@ namespace WebCMS\BlogModule;
  *
  * @author Jakub Šanda <jakub.sanda at webcook.cz>
  */
-class Blog extends \WebCMS\Module {
+class Blog extends \WebCMS\Module 
+{
 	
 	protected $name = 'Blog';
 	
@@ -33,11 +34,9 @@ class Blog extends \WebCMS\Module {
 		
 	);
 	
-	public function __construct(){
+	public function __construct()
+	{
 		$this->addBox('Blog box', 'Blog', 'blogBox');
-		$this->addBox('Blog header', 'Blog', 'blogBoxHeader');
-		$this->addBox('Blog previous', 'Blog', 'blogBoxPrevious');
-		$this->addBox('Blog comments', 'Blog', 'blogBoxComments');
 	}
 	
 }
