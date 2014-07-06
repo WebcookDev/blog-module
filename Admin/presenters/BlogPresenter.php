@@ -68,11 +68,9 @@ class BlogPresenter extends \AdminModule\BasePresenter {
 		
 		$this->flashMessage('Blog has been removed.', 'success');
 		
-		if(!$this->isAjax()){
-			$this->redirect('default', array(
-				'idPage' => $this->actualPage->getId()
-			));
-		}
+		$this->forward('default', array(
+			'idPage' => $this->actualPage->getId()
+		));
 	}
 	
 	public function createComponentBlogForm(){
@@ -166,7 +164,7 @@ class BlogPresenter extends \AdminModule\BasePresenter {
 		$this->em->flush();
 		
 		$this->flashMessage('Blog has been saved.', 'success');
-		$this->redirect('default', array(
+		$this->forward('default', array(
 			'idPage' => $this->actualPage->getId()
 		));
 	}
