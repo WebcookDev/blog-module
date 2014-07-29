@@ -14,9 +14,9 @@
 				</span>
 				
 				<span class="label label-default blogPostsDate">
-				    <span class="dayInDate">{$blogPost->getDate()->format('d')}</span>.
-				    <span class="monthInDate">{$blogPost->getDate()->format('m')}</span>.
-				    <span class="yearInDate">{$blogPost->getDate()->format('Y')}</span>
+				    <span class="dayInDate">{$blogPost->getCreated()->format('d')}</span>.
+				    <span class="monthInDate">{$blogPost->getCreated()->format('m')}</span>.
+				    <span class="yearInDate">{$blogPost->getCreated()->format('Y')}</span>
 				</span>
 				
 				<span class="comments-count">

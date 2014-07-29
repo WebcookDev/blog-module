@@ -39,6 +39,11 @@ class BlogPost extends \WebCMS\Entity\Seo {
 	private $published;
 
 	/**
+	 * @orm\Column(type="text")
+	 */
+	private $readTime;
+
+	/**
 	 * @orm\ManyToOne(targetEntity="WebCMS\Entity\Page")
 	 * @orm\JoinColumn(name="page_id", referencedColumnName="id", onDelete="CASCADE")
 	 */
@@ -147,6 +152,14 @@ class BlogPost extends \WebCMS\Entity\Seo {
 
 	public function setPublished($published) {
 		$this->published = $published;
+	}
+
+	public function getReadTime() {
+		return $this->readTime;
+	}
+
+	public function setReadTime($readTime) {
+		$this->readTime = $readTime;
 	}
 
 	public function getHide()
