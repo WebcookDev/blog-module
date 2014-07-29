@@ -110,6 +110,7 @@ class BlogPresenter extends \AdminModule\BasePresenter {
 		$this->blogPost->setTitle($values->title);
 		$this->blogPost->setPerex($values->perex);
 		$this->blogPost->setText($values->text);
+		$this->blogPost->setReadTime($values->readTime);
 		$this->blogPost->setPublished(new \Nette\DateTime($values->published));
 		$this->blogPost->setPage($this->actualPage);
 		$this->blogPost->setMetaTitle($values->metaTitle);
