@@ -78,6 +78,7 @@ class BlogPresenter extends \AdminModule\BasePresenter {
 		
 		$form->addText('title', 'Title')->setRequired('Fill in title.');
 		$form->addText('published', 'Date')->setRequired('Fill in date.');
+		$form->addText('readTime', 'Read time');
 		$form->addCheckbox('hide', 'Hide');
 		$form->addText('metaTitle', 'SEO title');
 		$form->addText('slug', 'SEO url');
