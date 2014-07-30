@@ -25,41 +25,8 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 	
     }
 
-    private function loadBlogPosts($parameters='')
-    {
-	    if (count($parameters) > 0) {
-	    	$user = $this->em->getRepository('WebCMS\Entity\User')->findOneByUsername($parameters[0]);
-		}
-
-		$page = $this->getParameter('p') ? $this->getParameter('p') : 0;
-
-		$this->ppp = $this->settings->get('Blog posts count', 'blogModule' . $this->actualPage->getId(), 'text', array())->getValue();
-
-		$this->paginator = new \Nette\Utils\Paginator;
-		$this->paginator->setItemCount(count($this->blogPosts = $this->repository->findAll())); 
-		$this->paginator->setItemsPerPage($this->ppp); 
-		$this->paginator->setPage($page == 0 ? $page + 1 : $page); 
-
-	    if (!empty($user)) {
-	    	
-	    	$this->blogPosts = $this->repository->findBy(array(
-			    'page' => $this->actualPage,
-			    'hide' => 0,
-			    'user' => $user->getId()
-			    ), array('published' => 'DESC'), $this->paginator->getLength(), $this->paginator->getOffset()
-		    );
-	    } else if (count($parameters) === 0) {
-	    	$this->blogPosts = $this->repository->findBy(array(
-			    'page' => $this->actualPage,
-			    'hide' => 0
-			    ), array('published' => 'DESC'), $this->paginator->getLength(), $this->paginator->getOffset()
-		    );	
-	    }
-    }
-
     public function actionDefault($id) 
     {
-    	$this->loadBlogPosts($this->getParameter('parameters'));
 
     }
 
@@ -130,6 +97,37 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 
 		    $this->addToBreadcrumbs($this->actualPage->getId(), 'Blog', 'Blog', $blogPost->getTitle(), $this->actualPage->getPath() . '/' . $blogPost->getSlug()
 		    );
+		}else{
+
+			$page = $this->getParameter('p') ? $this->getParameter('p') : 0;
+
+			$this->ppp = $this->settings->get('Blog posts count', 'blogModule' . $this->actualPage->getId(), 'text', array())->getValue();
+
+			$this->paginator = new \Nette\Utils\Paginator;
+			$this->paginator->setItemCount(count($this->blogPosts = $this->repository->findAll())); 
+			$this->paginator->setItemsPerPage($this->ppp); 
+			$this->paginator->setPage($page == 0 ? $page + 1 : $page); 
+
+	    	$parameters = $this->getParameter('parameters');
+		    if (count($parameters) > 0) {
+		    	$user = $this->em->getRepository('WebCMS\Entity\User')->findOneByUsername($parameters[0]);
+			}
+
+		    if (!empty($user)) {
+		    	
+		    	$this->blogPosts = $this->repository->findBy(array(
+				    'page' => $this->actualPage,
+				    'hide' => 0,
+				    'user' => $user->getId()
+				    ), array('published' => 'DESC'), $this->paginator->getLength(), $this->paginator->getOffset()
+			    );
+		    } else if (count($parameters) === 0) {
+		    	$this->blogPosts = $this->repository->findBy(array(
+				    'page' => $this->actualPage,
+				    'hide' => 0
+				    ), array('published' => 'DESC'), $this->paginator->getLength(), $this->paginator->getOffset()
+			    );	
+		    }
 		}
 
 		parent::beforeRender();
