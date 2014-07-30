@@ -29,6 +29,7 @@ class SettingsPresenter extends \AdminModule\BasePresenter {
 		
 		$settings = array();
 		$settings[] = $this->settings->get('Show comments', 'blogModule' . $this->actualPage->getId(), 'checkbox', array());
+		$settings[] = $this->settings->get('Blog posts count', 'blogModule' . $this->actualPage->getId(), 'text', array());
 		$settings[] = $this->settings->get('Box posts count', 'blogModule' . $this->actualPage->getId(), 'text', array());
 		$settings[] = $this->settings->get('Detail body class', 'blogModule' . $this->actualPage->getId(), 'text', array());
 		
