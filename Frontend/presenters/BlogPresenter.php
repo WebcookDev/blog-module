@@ -16,9 +16,9 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
     private $paginator;
 
     protected function startup() {
-	parent::startup();
+    	parent::startup();
 
-	$this->repository = $this->em->getRepository('WebCMS\BlogModule\Doctrine\BlogPost');
+    	$this->repository = $this->em->getRepository('WebCMS\BlogModule\Doctrine\BlogPost');
     }
 
     protected function beforeRender() {
@@ -130,7 +130,7 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 		    }
 		}
 
-		parent::beforeRender();
+        parent::beforeRender();
 
 		$this->template->blogPost = $blogPost;
 		$this->template->blogPosts = $this->blogPosts;
@@ -149,7 +149,15 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 		$repository = $context->em->getRepository('WebCMS\BlogModule\Doctrine\BlogPost');
 		
 		$limit = $context->settings->get('Box posts count', 'blogModule' . $fromPage->getId(), 'text', array())->getValue();
-		$blogPosts = $repository->findBy(array(), array('published' => 'DESC'), $limit);
+        $order = $context->settings->get('Box order', 'blogModule' . $fromPage->getId(), 'text', array())->getValue();
+
+        if ($order == 0) {
+            $blogPosts = $repository->findBy(array(), array('published' => 'DESC'), $limit);    
+        } else {
+            $blogPosts = $repository->findAll(); // TODO optimize
+            shuffle($blogPosts);
+            $blogPosts = array_slice($blogPosts, 0, $limit);
+        }
 
 		$template = $context->createTemplate();
 		$template->setFile('../app/templates/blog-module/Blog/box.latte');
