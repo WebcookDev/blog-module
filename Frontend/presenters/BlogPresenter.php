@@ -77,23 +77,23 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 				));
 		    }
 
-		    if ($this->isAjax()) {
-				$this->payload->title = $this->template->seoTitle;
-				$this->payload->url = $this->link('default', array(
-				    'path' => $this->actualPage->getPath(),
-				    'abbr' => $this->abbr,
-				    'parameters' => array(\Nette\Utils\Strings::webalize($blogPost->getTitle()))
-					));
-				$this->payload->nameSeo = \Nette\Utils\Strings::webalize($blogPost->getTitle());
-				$this->payload->name = $blogPost->getTitle();
-		    }
-		    
 	        $this->em->detach($this->actualPage);
 		    $this->actualPage->setClass($this->settings->get('Detail body class', 'blogModule' . $this->actualPage->getId(), 'text', array())->getValue());
 		    $this->template->seoTitle = $blogPost->getMetaTitle();
 		    $this->template->seoDescription = $blogPost->getMetaDescription();
 		    $this->template->seoKeywords = $blogPost->getMetaKeywords();
 		    $this->template->previous = $this->getPrevious($blogPost);
+
+		if ($this->isAjax()) {
+			$this->payload->title = $this->template->seoTitle;
+			$this->payload->url = $this->link('default', array(
+			    'path' => $this->actualPage->getPath(),
+			    'abbr' => $this->abbr,
+			    'parameters' => array(\Nette\Utils\Strings::webalize($blogPost->getTitle()))
+				));
+			$this->payload->nameSeo = \Nette\Utils\Strings::webalize($blogPost->getTitle());
+			$this->payload->name = $blogPost->getTitle();
+		}
 
 		    $this->addToBreadcrumbs($this->actualPage->getId(), 'Blog', 'Blog', $blogPost->getTitle(), $this->actualPage->getPath() . '/' . $blogPost->getSlug()
 		    );
