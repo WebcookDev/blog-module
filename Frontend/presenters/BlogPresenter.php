@@ -89,9 +89,9 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 			$this->payload->url = $this->link('default', array(
 			    'path' => $this->actualPage->getPath(),
 			    'abbr' => $this->abbr,
-			    'parameters' => array(\Nette\Utils\Strings::webalize($blogPost->getTitle()))
+			    'parameters' => array($blogPost->getSlug())
 				));
-			$this->payload->nameSeo = \Nette\Utils\Strings::webalize($blogPost->getTitle());
+			$this->payload->nameSeo = $blogPost->getSlug();
 			$this->payload->name = $blogPost->getTitle();
 		}
 
