@@ -27,7 +27,27 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 
     public function actionDefault($id) 
     {
+	$parameters = $this->getParameter('parameters');
 
+	    if (count($parameters) > 0) {
+	    	$user = $this->em->getRepository('WebCMS\Entity\User')->findOneByUsername($parameters[0]);
+		}
+	
+	    if (!empty($user)) {
+	    	
+	    	$this->blogPosts = $this->repository->findBy(array(
+			    'page' => $this->actualPage,
+			    'hide' => 0,
+			    'user' => $user->getId()
+			    ), array('published' => 'DESC')
+		    );
+	    } else if (count($parameters) === 0) {
+	    	$this->blogPosts = $this->repository->findBy(array(
+			    'page' => $this->actualPage,
+			    'hide' => 0
+			    ), array('published' => 'DESC')
+		    );	
+	    }
     }
 
     /**
