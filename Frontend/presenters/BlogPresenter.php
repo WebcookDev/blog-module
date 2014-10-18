@@ -97,13 +97,13 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 				));
 		    }
 
-	        $this->em->detach($this->actualPage);
+	        
 		    $this->actualPage->setClass($this->settings->get('Detail body class', 'blogModule' . $this->actualPage->getId(), 'text', array())->getValue());
 		    $this->template->seoTitle = $blogPost->getMetaTitle();
 		    $this->template->seoDescription = $blogPost->getMetaDescription();
 		    $this->template->seoKeywords = $blogPost->getMetaKeywords();
 		    $this->template->previous = $this->getPrevious($blogPost);
-
+		$this->em->detach($this->actualPage);
 		if ($this->isAjax()) {
 			$this->payload->title = $this->template->seoTitle;
 			$this->payload->url = $this->link('default', array(
