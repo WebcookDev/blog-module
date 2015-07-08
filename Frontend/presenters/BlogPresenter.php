@@ -124,7 +124,7 @@ class BlogPresenter extends \FrontendModule\BasePresenter {
 			$this->ppp = $this->settings->get('Blog posts count', 'blogModule' . $this->actualPage->getId(), 'text', array())->getValue();
 
 			$this->paginator = new \Nette\Utils\Paginator;
-			$this->paginator->setItemCount(count($this->blogPosts = $this->repository->findAll())); 
+			$this->paginator->setItemCount(count($this->blogPosts)); 
 			$this->paginator->setItemsPerPage($this->ppp); 
 			$this->paginator->setPage($page == 0 ? $page + 1 : $page); 
 
